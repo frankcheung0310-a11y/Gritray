@@ -1,52 +1,59 @@
 import os
 import markdown
-from datetime import datetime
+import re
 
-# 1. Setup paths
-ARTICLES_DIR = 'articles'
-DIST_DIR = 'dist' # Cloudflare will point here
-TEMPLATE_INDEX = 'templates/index.html'
-TEMPLATE_ARTICLE = 'templates/article.html'
+# Set directories
+POSTS_DIR = 'articles'
+DIST_DIR = 'dist'
+TEMPLATES_DIR = 'templates'
 
 if not os.path.exists(DIST_DIR):
     os.makedirs(os.path.join(DIST_DIR, 'articles'))
 
-# 2. Process all Markdown files
-posts = []
-for filename in os.listdir(ARTICLES_DIR):
+# Load Templates
+with open(f'{TEMPLATES_DIR}/index.html', 'r') as f:
+    index_tpl = f.read()
+with open(f'{TEMPLATES_DIR}/article.html', 'r') as f:
+    article_tpl = f.read()
+
+posts_metadata = []
+
+# Process Markdown Articles
+for filename in os.listdir(POSTS_DIR):
     if filename.endswith('.md'):
-        with open(os.path.join(ARTICLES_DIR, filename), 'r') as f:
-            content = f.read()
-            html_content = markdown.markdown(content)
-            title = content.split('\n')[0].replace('# ', '') # Use first line as title
+        with open(os.path.join(POSTS_DIR, filename), 'r', encoding='utf-8') as f:
+            raw_text = f.read()
             
-            # Generate clean filename
+            # Smartly find the first H1 title
+            title_match = re.search(r'^#\s+(.*)', raw_text, re.MULTILINE)
+            title = title_match.group(1) if title_match else "Untitled Post"
+            
+            # Convert the ENTIRE markdown to HTML
+            # We keep the title in HTML but can hide it via CSS if needed
+            content_html = markdown.markdown(raw_text, extensions=['extra', 'codehilite'])
+            
             slug = filename.replace('.md', '.html')
             
             # Fill article template
-            with open(TEMPLATE_ARTICLE, 'r') as t:
-                article_html = t.read().replace('{{TITLE}}', title).replace('{{CONTENT}}', html_content)
+            full_article = article_tpl.replace('{{TITLE}}', title).replace('{{CONTENT}}', content_html)
             
-            with open(os.path.join(DIST_DIR, 'articles', slug), 'w') as out:
-                out.write(article_html)
+            with open(os.path.join(DIST_DIR, 'articles', slug), 'w', encoding='utf-8') as out:
+                out.write(full_article)
             
-            posts.append({
+            posts_metadata.append({
                 'title': title,
-                'slug': f'articles/{slug}',
-                'date': datetime.now().strftime('%b %d, %Y')
+                'url': f'articles/{slug}'
             })
 
-# 3. Build Index.html
-post_links = ""
-for post in posts:
-    post_links += f'''
-    <a href="{post['slug']}" class="post-entry">
-        <div class="post-date">{post['date']}</div>
+# Build Post Feed for Index
+feed_html = ""
+for post in posts_metadata:
+    feed_html += f'''
+    <a href="{post['url']}" class="post-entry">
         <div class="post-title">{post['title']}</div>
     </a>'''
 
-with open(TEMPLATE_INDEX, 'r') as t:
-    index_html = t.read().replace('{{POST_FEED}}', post_links)
-
-with open(os.path.join(DIST_DIR, 'index.html'), 'w') as out:
-    out.write(index_html)
+# Final Index
+final_index = index_tpl.replace('{{POST_FEED}}', feed_html)
+with open(os.path.join(DIST_DIR, 'index.html'), 'w', encoding='utf-8') as f:
+    f.write(final_index)
