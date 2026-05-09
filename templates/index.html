@@ -1,83 +1,120 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gritray | Perception Layer for Physical Intelligence</title>
+    <title>Gritray | Perception for Physical Intelligence</title>
     <style>
         :root {
-            --bg: #faf8f5; /* Pi 经典的奶油色背景 */
-            --text: #1a1a1a;
-            --secondary: #8c857d;
-            --accent: #000000;
+            --bg: #f7f3f0;
+            --text-main: #1a1a1a;
+            --text-muted: #6b6661;
+            --border: #e8e2dc;
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Georgia', serif; /* 使用衬线体增加学术美感 */
-            margin: 0;
+            color: var(--text-main);
+            font-family: "Ivar", "Georgia", serif;
+            line-height: 1.6;
             display: flex;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 2rem;
         }
+
         .container {
-            max-width: 600px;
-            text-align: center;
+            max-width: 720px;
+            width: 100%;
+            padding: 12vh 2rem;
         }
-        .logo {
-            font-family: 'Helvetica Neue', sans-serif;
+
+        .brand {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             font-weight: 600;
-            letter-spacing: 4px;
+            letter-spacing: 0.25em;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            color: var(--secondary);
-            margin-bottom: 2rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
         }
+
         h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 400;
-            margin-bottom: 2rem;
-            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.01em;
         }
-        .description {
-            font-size: 1.25rem;
-            line-height: 1.7;
-            color: var(--secondary);
-            margin-bottom: 4rem;
+
+        .summary {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 5rem;
         }
-        .nav-links {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            display: inline-block;
+
+        .feed {
+            border-top: 1px solid var(--border);
         }
-        .nav-links li {
-            margin: 1.5rem 0;
-        }
-        .nav-links a {
-            color: var(--text);
+
+        /* Styles for the automatically generated links */
+        .post-entry {
+            display: block;
+            padding: 2.5rem 0;
             text-decoration: none;
-            font-size: 1.2rem;
-            border-bottom: 1px solid #d4cfc7;
-            transition: all 0.3s;
+            border-bottom: 1px solid var(--border);
+            transition: opacity 0.2s ease;
         }
-        .nav-links a:hover {
-            border-bottom-color: var(--accent);
-            color: var(--accent);
+
+        .post-entry:hover {
+            opacity: 0.5;
+        }
+
+        .post-title {
+            font-size: 1.8rem;
+            color: var(--text-main);
+            font-weight: 400;
+        }
+
+        footer {
+            margin-top: 8rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        footer a {
+            color: var(--text-main);
+            text-decoration: none;
+            border-bottom: 1px solid #d4cfc7;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="logo">Gritray.com</div>
-        <h1>Intelligence becomes real when the world stops being frictionless.</h1>
-        <p class="description">探索物理规律作为 AI 世界模型的底层语法。这里是关于 Fricial Intelligence 的思考阵地。</p>
-        
-        <ul class="nav-links">
-            <li><a href="articles/physics-as-grammar.html">01. 摩擦力：世界模型缺失的语法</a></li>
-            </ul>
+        <header>
+            <div class="brand">Gritray.com</div>
+            <h1>Intelligence is the negotiation with physical resistance.</h1>
+            <p class="summary">Defining the Fricial Protocol: A semantic framework for World Models and Embodied AI.</p>
+        </header>
+
+        <main class="feed">
+            {{POST_FEED}}
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Gritray Lab. Dedicated to Physical Truth.</p>
+            <p>Inquiries: <a href="mailto:Frank@X-Qubit.com">Frank@X-Qubit.com</a></p>
+        </footer>
     </div>
+
 </body>
 </html>
