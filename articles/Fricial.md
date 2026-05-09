@@ -1,4 +1,4 @@
-Fricial: The Missing Reality Layer Between World Models and AGI
+# Fricial: The Missing Reality Layer Between World Models and AGI
 
 Today’s AI models can write code, generate videos, understand language, simulate emotions, and even display forms of reasoning. Yet an increasingly obvious problem has begun to emerge: these systems may appear intelligent, but they still do not feel like entities that truly exist within reality. They are better understood as systems predicting reality, rather than living inside it.
 
