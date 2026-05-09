@@ -85,3 +85,9 @@ with open(os.path.join(DIST_DIR, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(final_index)
 
 print(f"Successfully built {len(posts_metadata)} articles into {DIST_DIR}/")
+
+import shutil
+
+if os.path.exists('favicon.png'):
+    shutil.copy('favicon.png', os.path.join(DIST_DIR, 'favicon.png'))
+    print("Favicon copied to dist folder.")
