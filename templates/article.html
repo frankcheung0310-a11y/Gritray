@@ -81,7 +81,9 @@
         /* Content Styling - This handles the Markdown output */
         .content {
             font-size: 1.25rem;
-            text-align: justify;
+            text-align: left;
+            hyphens: auto;
+            word-break: break-word;
         }
 
         .content p {
@@ -132,8 +134,8 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .content { font-size: 1.15rem; }
+            h1 { font-size: 2.2rem; line-height: 1.1; }
+            .content { font-size: 1.15rem; line-height: 1.7; }
         }
     </style>
 </head>
