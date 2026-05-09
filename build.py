@@ -69,19 +69,15 @@ for filename in os.listdir(POSTS_DIR):
                 'filename': filename # for sorting or debugging
             })
 
-# --- Build Post Feed for Index ---
-# Sort posts by filename (optional, can be customized)
-posts_metadata.sort(key=lambda x: x['filename'], reverse=True)
-
+# Build Post Feed for Index
 feed_html = ""
-if not posts_metadata:
-    feed_html = "<p style='color: #6b6661;'>No research papers published yet.</p>"
-else:
-    for post in posts_metadata:
-        feed_html += f'''
-        <a href="{post['url']}" class="post-entry">
-            <div class="post-title">{post['title']}</div>
-        </a>'''
+for post in posts_metadata:
+    # 在 url 前加一个 / 确保它是根路径
+    absolute_url = f"/{post['url']}"
+    feed_html += f'''
+    <a href="{absolute_url}" class="post-entry">
+        <div class="post-title">{post['title']}</div>
+    </a>'''
 
 # 5. Final Index Assembly
 final_index = index_tpl.replace('{{POST_FEED}}', feed_html)
