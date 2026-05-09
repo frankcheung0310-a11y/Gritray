@@ -2,58 +2,90 @@ import os
 import markdown
 import re
 
-# Set directories
-POSTS_DIR = 'articles'
-DIST_DIR = 'dist'
-TEMPLATES_DIR = 'templates'
+# --- Configuration ---
+POSTS_DIR = 'articles'      # Where you put your .md files
+DIST_DIR = 'dist'          # Where Cloudflare serves from
+TEMPLATES_DIR = 'templates' # Where your HTML templates are
 
+# Ensure output directories exist
 if not os.path.exists(DIST_DIR):
-    os.makedirs(os.path.join(DIST_DIR, 'articles'))
+    os.makedirs(os.path.join(DIST_DIR, 'articles'), exist_ok=True)
+elif not os.path.exists(os.path.join(DIST_DIR, 'articles')):
+    os.makedirs(os.path.join(DIST_DIR, 'articles'), exist_ok=True)
 
 # Load Templates
-with open(f'{TEMPLATES_DIR}/index.html', 'r') as f:
-    index_tpl = f.read()
-with open(f'{TEMPLATES_DIR}/article.html', 'r') as f:
-    article_tpl = f.read()
+try:
+    with open(f'{TEMPLATES_DIR}/index.html', 'r', encoding='utf-8') as f:
+        index_tpl = f.read()
+    with open(f'{TEMPLATES_DIR}/article.html', 'r', encoding='utf-8') as f:
+        article_tpl = f.read()
+except FileNotFoundError as e:
+    print(f"Error: Template files not found in {TEMPLATES_DIR} folder.")
+    exit(1)
 
 posts_metadata = []
 
-# Process Markdown Articles
+# --- Process Markdown Articles ---
+if not os.path.exists(POSTS_DIR):
+    os.makedirs(POSTS_DIR)
+    print(f"Created {POSTS_DIR} directory. Please add .md files there.")
+
 for filename in os.listdir(POSTS_DIR):
     if filename.endswith('.md'):
-        with open(os.path.join(POSTS_DIR, filename), 'r', encoding='utf-8') as f:
+        file_path = os.path.join(POSTS_DIR, filename)
+        with open(file_path, 'r', encoding='utf-8') as f:
             raw_text = f.read()
             
-            # Smartly find the first H1 title
+            # 1. Extract the first H1 title (e.g., # My Title)
             title_match = re.search(r'^#\s+(.*)', raw_text, re.MULTILINE)
-            title = title_match.group(1) if title_match else "Untitled Post"
+            if title_match:
+                title = title_match.group(1).strip()
+                # 2. Remove the first H1 line to avoid double titles in article.html
+                # This regex removes the first occurrence of # Title
+                body_md = re.sub(r'^#\s+.*', '', raw_text, count=1, flags=re.MULTILINE)
+            else:
+                title = "Untitled Post"
+                body_md = raw_text
             
-            # Convert the ENTIRE markdown to HTML
-            # We keep the title in HTML but can hide it via CSS if needed
-            content_html = markdown.markdown(raw_text, extensions=['extra', 'codehilite'])
+            # 3. Convert Markdown to HTML with advanced extensions
+            # 'extra' includes tables, footnotes, etc.
+            content_html = markdown.markdown(body_md, extensions=['extra', 'nl2br', 'sane_lists'])
             
+            # Generate the output filename (slug)
             slug = filename.replace('.md', '.html')
             
-            # Fill article template
+            # 4. Fill article template
             full_article = article_tpl.replace('{{TITLE}}', title).replace('{{CONTENT}}', content_html)
             
-            with open(os.path.join(DIST_DIR, 'articles', slug), 'w', encoding='utf-8') as out:
+            # Save the individual article page
+            output_path = os.path.join(DIST_DIR, 'articles', slug)
+            with open(output_path, 'w', encoding='utf-8') as out:
                 out.write(full_article)
             
+            # Store metadata for the index page link list
             posts_metadata.append({
                 'title': title,
-                'url': f'articles/{slug}'
+                'url': f'articles/{slug}',
+                'filename': filename # for sorting or debugging
             })
 
-# Build Post Feed for Index
-feed_html = ""
-for post in posts_metadata:
-    feed_html += f'''
-    <a href="{post['url']}" class="post-entry">
-        <div class="post-title">{post['title']}</div>
-    </a>'''
+# --- Build Post Feed for Index ---
+# Sort posts by filename (optional, can be customized)
+posts_metadata.sort(key=lambda x: x['filename'], reverse=True)
 
-# Final Index
+feed_html = ""
+if not posts_metadata:
+    feed_html = "<p style='color: #6b6661;'>No research papers published yet.</p>"
+else:
+    for post in posts_metadata:
+        feed_html += f'''
+        <a href="{post['url']}" class="post-entry">
+            <div class="post-title">{post['title']}</div>
+        </a>'''
+
+# 5. Final Index Assembly
 final_index = index_tpl.replace('{{POST_FEED}}', feed_html)
 with open(os.path.join(DIST_DIR, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(final_index)
+
+print(f"Successfully built {len(posts_metadata)} articles into {DIST_DIR}/")
