@@ -88,10 +88,9 @@ print(f"Successfully built {len(posts_metadata)} articles into {DIST_DIR}/")
 
 import shutil
 
-if os.path.exists('favicon.png'):
-    shutil.copy('favicon.png', os.path.join(DIST_DIR, 'favicon.png'))
-    print("Favicon copied to dist folder.")
+static_assets = ['favicon.png', 'og-image.png']
 
-for static_file in ['favicon.png', 'og-image.png']:
-    if os.path.exists(static_file):
-        shutil.copy(static_file, os.path.join(DIST_DIR, static_file))
+for asset in static_assets:
+    if os.path.exists(asset):
+        shutil.copy(asset, os.path.join(DIST_DIR, asset))
+        print(f"Successfully synced: {asset}")
