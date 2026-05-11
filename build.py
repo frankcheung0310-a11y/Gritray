@@ -91,3 +91,7 @@ import shutil
 if os.path.exists('favicon.png'):
     shutil.copy('favicon.png', os.path.join(DIST_DIR, 'favicon.png'))
     print("Favicon copied to dist folder.")
+
+for static_file in ['favicon.png', 'og-image.png']:
+    if os.path.exists(static_file):
+        shutil.copy(static_file, os.path.join(DIST_DIR, static_file))
