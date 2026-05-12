@@ -1,5 +1,7 @@
 # What If AI Is Learning Physics Backwards?
 
+### Gritray and the Missing Half of Embodied Intelligence
+
 Artificial intelligence today is trained mostly in one direction.
 
 First, the model builds an internal representation of the world. Then it refines that representation through prediction, simulation, and correction. Language models predict tokens. Vision models predict pixels. World models predict future states of environments. Even robotics increasingly depends on simulated environments where AI learns physical behavior before touching reality itself.
