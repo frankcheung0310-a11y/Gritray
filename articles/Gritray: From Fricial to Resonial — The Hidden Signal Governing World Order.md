@@ -87,5 +87,3 @@ Resonial transforms AI from a collection of independent agents into a **coherent
 At Gritray, this triad forms the foundation for **physically and temporally aware AI world models**, bridging micro-scale interactions with macro-scale order, making AI systems capable of **seeing, feeling, and orchestrating the world** as it truly behaves.
 
 ---
-
-*This concept report is part of the Gritray Lab series. For the Fricial Protocol white paper, visit frictial.com. For the Resonial principle, visit resonial.com. Correspondence: frank@x-qubit.com*
