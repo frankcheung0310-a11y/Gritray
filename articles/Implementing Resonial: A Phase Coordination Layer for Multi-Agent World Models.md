@@ -1,4 +1,4 @@
-# Implementing Resonial: Phase Coordination for Multi-Agent AI World Models
+# Implementing Resonial: Phase Coordination for Multi-Agent AI World Models 
 
 **Gritray Lab · Technical Blog v1.1**
 
@@ -109,7 +109,7 @@ class ResonialLayer(nn.Module):
 
 The diagram below illustrates how the Resonial layer coordinates phase across multiple agents in a world model, while Fricial and Artifriction handle local interactions:
 
-![Resonial Phase Coordination Visualization](./assets/a_clean_technical_document_slide_style_infograph.png)
+![Resonial Phase Coordination Visualization](/assets/a_clean_technical_document_slide_style_infograph.png)
 
 - **Fricial**: Local contact and resistance forces  
 - **Artifriction**: AI-inferred friction embedded in the world model  
