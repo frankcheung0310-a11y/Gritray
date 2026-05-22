@@ -1,4 +1,4 @@
-# Implementing Resonial: Phase Coordination for Multi-Agent AI World Models 
+# Implementing Resonial: Phase Coordination for Multi-Agent AI World Models
 
 **Gritray Lab · Technical Blog v1.1**
 
