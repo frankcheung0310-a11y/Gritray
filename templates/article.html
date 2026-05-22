@@ -90,6 +90,22 @@
             font-style: italic;
         }
 
+        /* ─── 新增：专为学术和科技图片定制的样式 ─── */
+        .image-container {
+            width: 100%;
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+
+        .content-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 4px; /* 极简微圆角 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 柔和暗影，显高级感 */
+        }
+
         /* Content Styling - This handles the Markdown output */
         .content {
             font-size: 1.25rem;
@@ -150,35 +166,35 @@
             .content { font-size: 1.15rem; line-height: 1.7; }
         }
 
-table {
-    width: 100%;
-    border-collapse: collapse; /* 边框合并 */
-    margin: 2rem 0;
-    font-family: 'Courier New', Courier, monospace; /* 使用等宽字体更有技术感 */
-    font-size: 0.9rem;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 边框合并 */
+            margin: 2rem 0;
+            font-family: 'Courier New', Courier, monospace; /* 使用等宽字体更有技术感 */
+            font-size: 0.9rem;
+        }
 
-th {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-    font-weight: 700;
-    text-transform: uppercase;
-}
+        th {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
 
-td {
-    border: 1px solid #ddd;
-    padding: 10px;
-}
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
 
-tr:nth-child(even) {
-    background-color: #fafafa;
-}
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
 
-tr:hover {
-    background-color: #f0f0f0;
-}
+        tr:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -190,6 +206,10 @@ tr:hover {
             <h1>{{TITLE}}</h1>
             <div class="meta">Physical Intelligence Research • Gritray Lab</div>
         </header>
+
+        <div class="image-container">
+            <img src="/images/a_clean_technical_document_slide_style_infograph.png" alt="Resonial Phase Coordination Visualization">
+        </div>
 
         <section class="content">
             {{CONTENT}}
