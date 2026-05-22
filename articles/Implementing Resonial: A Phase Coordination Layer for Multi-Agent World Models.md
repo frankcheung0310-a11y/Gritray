@@ -1,5 +1,7 @@
 # Implementing Resonial: Phase Coordination for Multi-Agent AI World Models
 
+**Gritray Lab · Technical Blog v1.1**
+
 > Resonial is a latent phase function that coordinates temporal behavior across agents in AI world models. This article provides a minimal implementation example and explains its conceptual motivation.
 
 ---
@@ -97,13 +99,25 @@ class ResonialLayer(nn.Module):
 
 **Notes:**
 
-- The code demonstrates a **minimal working example** for multi-agent phase coordination.  
+- Demonstrates a **minimal working example** for multi-agent phase coordination.  
 - `omega` and `phi` are learnable to adapt to diurnal, seasonal, or task-specific rhythms.  
 - Each agent receives a **scalar phase output**, which can be extended to multi-dimensional latent vectors.  
 
 ---
 
-## 4. Applications
+## 4. Visualization
+
+The diagram below illustrates how the Resonial layer coordinates phase across multiple agents in a world model, while Fricial and Artifriction handle local interactions:
+
+![Resonial Phase Coordination Visualization](./assets/a_clean_technical_document_slide_style_infograph.png)
+
+- **Fricial**: Local contact and resistance forces  
+- **Artifriction**: AI-inferred friction embedded in the world model  
+- **Resonial**: Global latent phase coordinating multiple agents over time
+
+---
+
+## 5. Applications
 
 - **Multi-Agent Simulation**: Synchronize animations, gait cycles, and environmental rhythms.  
 - **Robotics**: Align robot motions in time-sensitive cooperative tasks.  
@@ -112,7 +126,7 @@ class ResonialLayer(nn.Module):
 
 ---
 
-## 5. Vision
+## 6. Vision
 
 Resonial complements **Fricial** (local contact dynamics) and **Artifriction** (AI-inferred friction) by **adding a global temporal dimension**. Together:
 
@@ -121,3 +135,7 @@ Resonial complements **Fricial** (local contact dynamics) and **Artifriction** (
 - Follow coherent global rhythms (Resonial)  
 
 This triad enables world models to **simulate reality in both space and time**, bridging micro-scale interactions and macro-scale order.
+
+---
+
+*This report is part of the Gritray Lab series on AI world model architectures. For further reading, see Fricial and Artifriction white papers.*
