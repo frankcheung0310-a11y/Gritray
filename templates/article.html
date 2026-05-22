@@ -90,22 +90,6 @@
             font-style: italic;
         }
 
-       
-        .image-container {
-            width: 100%;
-            margin: 2.5rem 0;
-            text-align: center;
-        }
-
-        .content-image {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            border-radius: 4px; 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
-        }
-
         /* Content Styling - This handles the Markdown output */
         .content {
             font-size: 1.25rem;
@@ -116,6 +100,16 @@
 
         .content p {
             margin-bottom: 2rem;
+        }
+
+        /* ─── 新增与优化：完美支持 Markdown 内部插入的图片 ─── */
+        .content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 2.5rem auto; /* 上下留白，左右自动居中 */
+            border-radius: 4px; /* 极简微圆角 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 柔和暗影，显高级感 */
         }
 
         .content h2 {
@@ -170,7 +164,7 @@
             width: 100%;
             border-collapse: collapse; /* 边框合并 */
             margin: 2rem 0;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Courier New', Courier, monospace; /* 使用等宽字体更有技术感 */
             font-size: 0.9rem;
         }
 
@@ -206,10 +200,6 @@
             <h1>{{TITLE}}</h1>
             <div class="meta">Physical Intelligence Research • Gritray Lab</div>
         </header>
-
-        <div class="image-container">
-            <img src="/assets/a_clean_technical_document_slide_style_infograph.png" alt="Resonial Phase Coordination Visualization" class="content-image">
-        </div>
 
         <section class="content">
             {{CONTENT}}
