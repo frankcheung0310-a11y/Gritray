@@ -1,11 +1,13 @@
 import os
 import markdown
 import re
+import shutil
 
 # --- Configuration ---
 POSTS_DIR = 'articles'      # Where you put your .md files
-DIST_DIR = 'dist'          # Where Cloudflare serves from
+DIST_DIR = 'dist'           # Where Cloudflare serves from
 TEMPLATES_DIR = 'templates' # Where your HTML templates are
+ASSETS_DIR = 'assets'       # 你的图片仓库文件夹
 
 # Ensure output directories exist
 if not os.path.exists(DIST_DIR):
@@ -41,14 +43,12 @@ for filename in os.listdir(POSTS_DIR):
             if title_match:
                 title = title_match.group(1).strip()
                 # 2. Remove the first H1 line to avoid double titles in article.html
-                # This regex removes the first occurrence of # Title
                 body_md = re.sub(r'^#\s+.*', '', raw_text, count=1, flags=re.MULTILINE)
             else:
                 title = "Untitled Post"
                 body_md = raw_text
             
             # 3. Convert Markdown to HTML with advanced extensions
-            # 'extra' includes tables, footnotes, etc.
             content_html = markdown.markdown(body_md, extensions=['extra', 'nl2br', 'sane_lists'])
             
             # Generate the output filename (slug)
@@ -66,13 +66,12 @@ for filename in os.listdir(POSTS_DIR):
             posts_metadata.append({
                 'title': title,
                 'url': f'articles/{slug}',
-                'filename': filename # for sorting or debugging
+                'filename': filename 
             })
 
 # Build Post Feed for Index
 feed_html = ""
 for post in posts_metadata:
-    # 在 url 前加一个 / 确保它是根路径
     absolute_url = f"/{post['url']}"
     feed_html += f'''
     <a href="{absolute_url}" class="post-entry">
@@ -86,11 +85,26 @@ with open(os.path.join(DIST_DIR, 'index.html'), 'w', encoding='utf-8') as f:
 
 print(f"Successfully built {len(posts_metadata)} articles into {DIST_DIR}/")
 
-import shutil
 
-static_assets = ['favicon.png', 'og-image.png']
+# ─── 核心修复：同步所有的静态资源与整个图片文件夹 ───
 
-for asset in static_assets:
-    if os.path.exists(asset):
-        shutil.copy(asset, os.path.join(DIST_DIR, asset))
-        print(f"Successfully synced: {asset}")
+# 1. 复制根目录的独立静态文件
+static_files = ['favicon.png', 'og-image.png']
+for file in static_files:
+    if os.path.exists(file):
+        shutil.copy(file, os.path.join(DIST_DIR, file))
+        print(f"Successfully synced file: {file}")
+
+# 2. 复制整个 assets 文件夹到 dist/assets
+dist_assets_path = os.path.join(DIST_DIR, ASSETS_DIR)
+
+# 如果 dist 里已经有老 assets 文件夹，先删掉它保证无缝更新
+if os.path.exists(dist_assets_path):
+    shutil.rmtree(dist_assets_path)
+
+# 如果本地存在 assets 文件夹，将其完整复制过去
+if os.path.exists(ASSETS_DIR):
+    shutil.copytree(ASSETS_DIR, dist_assets_path)
+    print(f"Successfully synced entire folder: {ASSETS_DIR} -> {dist_assets_path}")
+else:
+    print(f"Warning: Local '{ASSETS_DIR}' folder not found. No images were copied.")
