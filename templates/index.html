@@ -66,7 +66,29 @@
         .summary {
             font-size: 1.4rem;
             color: var(--text-muted);
+            margin-bottom: 4rem;
+        }
+
+        /* ─── 新增：闭环架构图容器与高级图像质感 ─── */
+        .framework-showcase {
             margin-bottom: 5rem;
+            width: 100%;
+        }
+
+        .framework-showcase img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: zoom-in;
+        }
+
+        .framework-showcase img:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
         .feed {
@@ -116,6 +138,12 @@
             <h1>Intelligence is the negotiation with physical resistance.</h1>
             <p class="summary">Defining the Fricial Protocol: A semantic framework for World Models and Embodied AI.</p>
         </header>
+
+        <div class="framework-showcase">
+            <a href="/assets/world-model-loop.png" target="_blank" title="Click to view full high-res image">
+                <img src="/assets/world-model-loop.png" alt="Gritray World Model Closed-Loop Architecture">
+            </a>
+        </div>
 
         <main class="feed">
             {{POST_FEED}}
