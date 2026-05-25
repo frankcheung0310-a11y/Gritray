@@ -93,7 +93,7 @@ if os.path.exists(POSTS_DIR):
 
 # ─── 核心算法：双重加权秩序排序 ───
 # 优先依据 pinned 状态（True 排前面），如果状态相同，再依据日期 date 倒序（最新排前面）
-posts_metadata.sort(key=lambda x: (not x['pinned'], x['date']), reverse=True)
+posts_metadata.sort(key=lambda x: (x['pinned'], x['date']), reverse=True)
 
 
 # 构建主页的文章列表 Feed
