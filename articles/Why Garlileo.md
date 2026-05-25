@@ -1,3 +1,9 @@
+---
+title: "Garlileo: The Architecture of Physical Intelligence"
+date: 2026-05-25
+pinned: true
+---
+
 # Why Garlileo
 
 The transition from **Gritray** to **Garlileo** was not a rebrand driven by aesthetics alone.  
