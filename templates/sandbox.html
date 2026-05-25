@@ -31,7 +31,6 @@
             z-index: 1;
         }
 
-        /* HUD 控制面板 */
         .hud-panel {
             position: absolute;
             top: 2rem;
@@ -80,7 +79,6 @@
         .status-value { color: var(--cyan-brand); font-weight: bold; }
         .status-value.active { color: #00ff66; }
 
-        /* 悬浮 UI 标签结构 */
         .tech-label {
             position: absolute;
             z-index: 5;
@@ -104,14 +102,14 @@
     <canvas id="webgl-canvas"></canvas>
 
     <div class="hud-panel">
-        <div class="brand-header">GA<span>R</span>LILEO</div>
+        <div class="brand-header">GAR<span>R</span>LILEO</div>
         <div class="subtitle">FRICIAL PROTOCOL SANDBOX V1.0.1</div>
         
         <label class="upload-btn" for="file-input">📥 UPLOAD SURFACE IMAGE</label>
         <input type="file" id="file-input" accept="image/*">
 
         <div class="status-box">
-            <div class="status-row"><span>Fricial Engine:</span><span id="engine-status" class="status-value">IDLE</span></div>
+            <div class="status-row"><span>Fricial Engine:</span><span id="engine-status" class="status-value">ACTIVE</span></div>
             <div class="status-row"><span>View Mode:</span><span class="status-value active">Explo-View Mode</span></div>
             <div class="status-row"><span>Resolution:</span><span class="status-value">128x128 Mesh</span></div>
         </div>
@@ -124,12 +122,21 @@
     <script>
         let scene, camera, renderer, clock;
         let layerBot, layerMid, particleSystem; 
-        let boundingLines, scanLine;
+        let boundingLines;
         let scanAnimation = false, scanProgress = 1.0;
-        let currentTexture = null;
+        let isTextureLoaded = false;
 
         const analyzeCanvas = document.createElement('canvas');
         const analyzeCtx = analyzeCanvas.getContext('2d');
+
+        // 创建一个透明占位纹理，防止 Shader 报错
+        const emptyCanvas = document.createElement('canvas');
+        emptyCanvas.width = 2;
+        emptyCanvas.height = 2;
+        const emptyCtx = emptyCanvas.getContext('2d');
+        emptyCtx.fillStyle = "rgba(10, 35, 40, 1)";
+        emptyCtx.fillRect(0, 0, 2, 2);
+        const placeholderTexture = new THREE.CanvasTexture(emptyCanvas);
 
         function init() {
             const canvas = document.getElementById('webgl-canvas');
@@ -138,7 +145,6 @@
 
             clock = new THREE.Clock();
 
-            // 调整摄像机视角，获得完美的斜切侧视爆炸图视角
             camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
             camera.position.set(2.8, -3.2, 3.0);
             camera.lookAt(0, 0, 0.2);
@@ -147,22 +153,18 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            // 光照层
             scene.add(new THREE.AmbientLight(0xffffff, 0.3));
             let dirLight = new THREE.DirectionalLight(0x00f5ff, 0.8);
             dirLight.position.set(1, -2, 5);
             scene.add(dirLight);
 
-            // 初始化：构建空状态下的三层框架
-            buildExplodedStructure(null, null);
+            buildExplodedStructure(placeholderTexture, null, false);
 
             window.addEventListener('resize', onWindowResize);
             animate();
         }
 
-        // ─── 核心功能：构建三层空间爆炸图 ───
-        function buildExplodedStructure(texture, imgData) {
-            // 清理旧对象
+        function buildExplodedStructure(texture, imgData, hasTex) {
             if(layerBot) scene.remove(layerBot);
             if(layerMid) scene.remove(layerMid);
             if(particleSystem) scene.remove(particleSystem);
@@ -170,11 +172,11 @@
 
             const size = 2.0;
 
-            // 1. 底层：Original RGB Texture Plane (Z = -0.4)
+            // 1. 底层
             const botGeo = new THREE.PlaneGeometry(size, size);
             const botMat = new THREE.MeshBasicMaterial({
-                map: texture || null,
-                color: texture ? 0xffffff : 0x112225,
+                map: texture,
+                color: hasTex ? 0xffffff : 0x0a2328,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0.8
@@ -183,15 +185,12 @@
             layerBot.position.z = -0.4;
             scene.add(layerBot);
 
-            // 2. 中层：Friction Heatmap Plane + Mesh Analysis (Z = 0.1)
-            // 根据图像亮度动态产生高度起伏（Bump/Elevation）
+            // 2. 中层
             const midGeo = new THREE.PlaneGeometry(size, size, 64, 64);
-            
-            // 自定义着色器：实时计算像素亮度并转换为“红/青”摩擦力场热力图
             const midMat = new THREE.ShaderMaterial({
                 uniforms: {
                     uTexture: { value: texture },
-                    uHasTexture: { value: texture ? 1.0 : 0.0 },
+                    uHasTexture: { value: hasTex ? 1.0 : 0.0 },
                     uScanProgress: { value: -1.0 }
                 },
                 vertexShader: `
@@ -204,7 +203,7 @@
                         float elev = 0.0;
                         if(uHasTexture > 0.5) {
                             vec4 c = texture2D(uTexture, uv);
-                            elev = (c.r + c.g + c.b) / 3.0 * 0.2; // 高度起伏
+                            elev = (c.r + c.g + c.b) / 3.0 * 0.25;
                         }
                         vElev = elev;
                         vec3 p = position;
@@ -221,34 +220,32 @@
                     void main() {
                         vec3 cyan = vec3(0.0, 0.96, 1.0);
                         vec3 red = vec3(0.85, 0.22, 0.23);
-                        vec4 base = vec4(0.05, 0.15, 0.18, 0.4);
+                        vec4 base = vec4(0.05, 0.2, 0.25, 0.3);
                         
                         if(uHasTexture > 0.5) {
                             vec4 c = texture2D(uTexture, vUv);
                             float bright = (c.r + c.g + c.b) / 3.0;
-                            // 摩擦力映射：越亮摩擦力越大（红色），越暗越滑溜（天青色）
                             vec3 heat = mix(cyan, red, bright);
                             base = vec4(heat, 0.65);
                         }
                         
-                        // 扫描线霓虹特效
                         if(uScanProgress > -0.99) {
                             float d = abs(vUv.y - uScanProgress);
-                            if(d < 0.02) {
-                                base += vec4(0.0, 1.0, 1.0, 1.0) * (1.0 - d/0.02);
+                            if(d < 0.03) {
+                                base += vec4(0.0, 1.0, 1.0, 1.0) * (1.0 - d/0.03);
                             }
                         }
                         gl_FragColor = base;
                     }
                 `,
                 transparent: true,
-                wireframe: texture ? false : true
+                wireframe: hasTex ? false : true
             });
             layerMid = new THREE.Mesh(midGeo, midMat);
             layerMid.position.z = 0.1;
             scene.add(layerMid);
 
-            // 3. 顶层：Particle Velocity Flow Plane (Z = 0.6)
+            // 3. 顶层
             const pCount = 2000;
             const pGeo = new THREE.BufferGeometry();
             const pPos = new Float32Array(pCount * 3);
@@ -260,7 +257,7 @@
                 let y = (Math.random() - 0.5) * size;
                 pPos[i*3] = x;
                 pPos[i*3+1] = y;
-                pPos[i*3+2] = 0.6; // 锁死在最顶层高度面
+                pPos[i*3+2] = 0.6;
 
                 pUv[i*2] = (x + size/2) / size;
                 pUv[i*2+1] = (y + size/2) / size;
@@ -280,8 +277,8 @@
             particleSystem.userData = { velocities: pVels, imgData: imgData, size: size };
             scene.add(particleSystem);
 
-            # 4. 四角全息边界连线（把三层空间串起来，瞬间产生科技工业感）
-            const lineMat = new THREE.LineBasicMaterial({ color: 0x00f5ff, transparent: true, opacity: 0.2 });
+            // 4. 四角全息边界连线
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x00f5ff, transparent: true, opacity: 0.25 });
             const lineGeo = new THREE.BufferGeometry();
             const h = size / 2;
             const pts = [
@@ -295,7 +292,6 @@
             scene.add(boundingLines);
         }
 
-        // ─── 粒子流智能阻抗减速算法 ───
         function updateParticleFlow(delta) {
             if(!particleSystem) return;
             const pos = particleSystem.geometry.attributes.position.array;
@@ -315,15 +311,12 @@
 
                     if(idx >= 0 && idx < imgData.data.length) {
                         let brightness = (imgData.data[idx] + imgData.data[idx+1] + imgData.data[idx+2]) / 3;
-                        // 核心：粒子流经过红色阻抗区时，速度暴跌 80%，形象化展示摩擦阻力
-                        factor = 1.0 - (brightness / 255 * 0.8);
+                        factor = 1.0 - (brightness / 255 * 0.85);
                     }
                 }
 
-                // 粒子由上至下流动
                 pos[i*3+1] -= 0.3 * delta * vels[i] * factor;
 
-                // 边界循环重置
                 if(pos[i*3+1] < -size/2) {
                     pos[i*3+1] = size/2;
                     pos[i*3] = (Math.random() - 0.5) * size;
@@ -335,7 +328,6 @@
             particleSystem.geometry.attributes.position.needsUpdate = true;
         }
 
-        // ─── 网页端图片上传并切片分析 ───
         document.getElementById('file-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -349,22 +341,22 @@
                     analyzeCtx.drawImage(img, 0, 0, 128, 128);
                     const imgData = analyzeCtx.getImageData(0, 0, 128, 128);
 
-                    currentTexture = new THREE.TextureLoader().load(evt.target.result);
-                    
-                    // 重新构建高大上的分离三层结构
-                    buildExplodedStructure(currentTexture, imgData);
+                    const loader = new THREE.TextureLoader();
+                    loader.load(evt.target.result, function(tex) {
+                        isTextureLoaded = true;
+                        buildExplodedStructure(tex, imgData, true);
 
-                    scanAnimation = true;
-                    scanProgress = 1.0;
-                    document.getElementById('engine-status').innerText = "SCANNING FORCE...";
-                    document.getElementById('engine-status').style.color = "#d9383a";
+                        scanAnimation = true;
+                        scanProgress = 1.0;
+                        document.getElementById('engine-status').innerText = "SCANNING...";
+                        document.getElementById('engine-status').style.color = "#d9383a";
+                    });
                 };
                 img.src = evt.target.result;
             };
             reader.readAsDataURL(file);
         });
 
-        // ─── 3D 标签追随映射 ───
         function updateTechLabels() {
             const labels = [
                 { id: 'label-top', z: 0.6 },
@@ -374,8 +366,7 @@
 
             labels.forEach(l => {
                 const el = document.getElementById(l.id);
-                if(currentTexture) {
-                    // 取每层平面的右上角，计算其在 3D 空间投射到屏幕上的 2D 坐标
+                if(isTextureLoaded) {
                     let vec = new THREE.Vector3(1.05, 0.5, l.z);
                     vec.project(camera);
                     let x = (vec.x * .5 + .5) * window.innerWidth;
@@ -394,16 +385,14 @@
             const delta = clock.getDelta();
             const time = clock.getElapsedTime();
 
-            // 整个爆炸模型极其轻微地进行呼吸慢摇，立体感炸裂
             const groupRotation = Math.sin(time * 0.15) * 0.03;
             if(layerBot) layerBot.rotation.z = groupRotation;
             if(layerMid) layerMid.rotation.z = groupRotation;
             if(particleSystem) particleSystem.rotation.z = groupRotation;
             if(boundingLines) boundingLines.rotation.z = groupRotation;
 
-            // 激光扫描行动画
             if(scanAnimation && layerMid) {
-                scanProgress -= delta * 0.4;
+                scanProgress -= delta * 0.5;
                 layerMid.material.uniforms.uScanProgress.value = scanProgress;
                 if(scanProgress < 0.0) {
                     scanAnimation = false;
