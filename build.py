@@ -143,3 +143,8 @@ if os.path.exists(ASSETS_DIR):
     print(f"⚡️ 成功：整个 '{ASSETS_DIR}' 静态图库已完美无缝同步至 -> {dist_assets_path}")
 else:
     print(f"⚠️ 警告：未在项目根目录下找到 '{ASSETS_DIR}' 文件夹，请检查大小写是否全小写！")
+
+with open(os.path.join(TEMPLATES_DIR, 'sandbox.html'), 'r', encoding='utf-8') as sf:
+    sandbox_content = sf.read()
+with open(os.path.join(DIST_DIR, 'sandbox.html'), 'w', encoding='utf-8') as df:
+    df.write(sandbox_content)
