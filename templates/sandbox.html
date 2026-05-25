@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garlileo | Physical Reality Sandbox</title>
+    <style>
+        :root {
+            --bg: #090d0e;
+            --cyan-brand: #00f5ff;
+            --accent-red: #d9383a;
+            --panel-bg: rgba(15, 23, 25, 0.85);
+            --border: rgba(0, 245, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: #e0e6e8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* 3D 渲染画布 */
+        #webgl-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* 顶层 HUD 控制面板 */
+        .hud-panel {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            max-width: 320px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .brand-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .brand-header span { color: var(--accent-red); }
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: #6b7c85;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 上传按钮设计 */
+        .upload-btn {
+            display: block;
+            width: 100%;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px dashed var(--cyan-brand);
+            color: var(--cyan-brand);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        .upload-btn:hover {
+            background: rgba(0, 245, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+        }
+        #file-input { display: none; }
+
+        /* 状态显示区 */
+        .status-box {
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+            font-size: 0.8rem;
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: #8fa0a8;
+        }
+        .status-value { color: var(--cyan-brand); font-weight: bold; }
+
+        /* 悬浮的 3D 物理标签（HTML 映射） */
+        .surface-label {
+            position: absolute;
+            z-index: 5;
+            background: rgba(217, 56, 58, 0.15);
+            border-left: 2px solid var(--accent-red);
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            color: #fff;
+            pointer-events: none;
+            display: none;
+            font-family: monospace;
+            backdrop-filter: blur(2px);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <canvas id="webgl-canvas"></canvas>
+
+    <div class="hud-panel">
+        <div class="brand-header">GAR<span>R</span>LILEO</div>
+        <div class="subtitle">Fricial Protocol Sandbox v1.0</div>
+        
+        <label class="upload-btn" for="file-input">
+            📥 UPLOAD SURFACE IMAGE
+        </label>
+        <input type="file" id="file-input" accept="image/*">
+
+        <div class="status-box">
+            <div class="status-row"><span>Engine:</span><span class="status-value">WebGL / Three.js</span></div>
+            <div class="status-row"><span>Scan Status:</span><span id="scan-status" class="status-value" style="color: #6b7c85;">IDLE</span></div>
+            <div class="status-row"><span>Flow Density:</span><span class="status-value">2,500 particles</span></div>
+        </div>
+    </div>
+
+    <div id="label-1" class="surface-label">μ_static: 0.72<br>Resistance: HIGH</div>
+    <div id="label-2" class="surface-label">μ_kinetic: 0.21<br>Slip Zone</div>
+
+    <script>
+        // --- Three.js 全局变量 ---
+        let scene, camera, renderer, surfaceMesh, particleSystem;
+        let scanLine, scanAnimation = false, scanProgress = 0;
+        const clock = new THREE.Clock();
+
+        // 用于分析像素的隐形 Canvas
+        const analyzeCanvas = document.createElement('canvas');
+        const analyzeCtx = analyzeCanvas.getContext('2d');
+
+        // --- 1. 初始化 WebGL 环境 ---
+        function init() {
+            const canvas = document.getElementById('webgl-canvas');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x090d0e, 0.15);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, -3.5, 4);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // 光照
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0x00f5ff, 0.8);
+            dirLight.position.set(0, -2, 4);
+            scene.add(dirLight);
+
+            // 创建初始空代理平面
+            createSurfacePlane(null);
+            createParticleSystem(null);
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        // --- 2. 创建/重构物理表面（Heatmap & Scanline） ---
+        function createSurfacePlane(imageSrc) {
+            if (surfaceMesh) scene.remove(surfaceMesh);
+
+            const geometry = new THREE.PlaneGeometry(3, 3, 64, 64);
+            
+            // 编写自定义 Shader 材质，完美融合：热力图 + 扫描线
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTexture: { value: imageSrc ? new THREE.TextureLoader().load(imageSrc) : null },
+                    uHasTexture: { value: imageSrc ? 1.0 : 0.0 },
+                    uScanProgress: { value: -1.0 },
+                    uCyan: { value: new THREE.Color(0x00f5ff) },
+                    uRed: { value: new THREE.Color(0xd9383a) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying float vElevation;
+                    uniform sampler2D uTexture;
+                    uniform float uHasTexture;
+                    void main() {
+                        vUv = uv;
+                        float elevation = 0.0;
+                        if(uHasTexture > 0.5) {
+                            // 根据图片亮度动态抬高顶点，形成3D高低不平的物理质感
+                            vec4 texColor = texture2D(uTexture, uv);
+                            elevation = (texColor.r + texColor.g + texColor.b) / 3.0 * 0.25;
+                        }
+                        vElevation = elevation;
+                        vec3 newPosition = position;
+                        newPosition.z += elevation;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    varying float vElevation;
+                    uniform sampler2D uTexture;
+                    uniform float uHasTexture;
+                    uniform float uScanProgress;
+                    uniform vec3 uCyan;
+                    uniform vec3 uRed;
+                    void main() {
+                        vec4 finalColor = vec4(0.05, 0.1, 0.12, 1.0); // 默认科技感底色
+                        
+                        if(uHasTexture > 0.5) {
+                            vec4 texColor = texture2D(uTexture, vUv);
+                            float brightness = (texColor.r + texColor.g + texColor.b) / 3.0;
+                            
+                            // Friction Heatmap 算法：高亮度映射为红色（高阻抗），低亮度映射为天青色（滑溜）
+                            vec3 heatmap = mix(uCyan, uRed, brightness);
+                            finalColor = vec4(heatmap, 0.7);
+                        }
+
+                        // AI 激光扫描线动画算法
+                        if(uScanProgress > -0.99) {
+                            float dist = abs(vUv.y - uScanProgress);
+                            if(dist < 0.015) {
+                                finalColor += vec4(0.0, 1.0, 1.0, 1.0) * (1.0 - dist/0.015); // 发光霓虹边缘
+                            }
+                        }
+                        gl_FragColor = finalColor;
+                    }
+                `,
+                transparent: true,
+                wireframe: imageSrc ? false : true // 没上传图时显示酷酷的网格
+            });
+
+            surfaceMesh = new THREE.Mesh(geometry, material);
+            scene.add(surfaceMesh);
+        }
+
+        // --- 3. 创建摩擦力粒子流（Particle Flow） ---
+        function createParticleSystem(imageData) {
+            if (particleSystem) scene.remove(particleSystem);
+
+            const count = 2500;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const velocities = new Float32Array(count);
+            const uvs = new Float32Array(count * 2);
+
+            for(let i=0; i<count; i++) {
+                // 随机分布在平面上
+                let x = (Math.random() - 0.5) * 3;
+                let y = (Math.random() - 0.5) * 3;
+                positions[i*3] = x;
+                positions[i*3+1] = y;
+                positions[i*3+2] = 0.02; // 稍微悬浮在表面上方
+
+                uvs[i*2] = (x + 1.5) / 3;
+                uvs[i*2+1] = (y + 1.5) / 3;
+
+                velocities[i] = 0.5 + Math.random() * 0.5; // 基础初速度
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+
+            // 粒子材质
+            const material = new THREE.PointsMaterial({
+                color: 0x00f5ff,
+                size: 0.015,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particleSystem = new THREE.Points(geometry, material);
+            particleSystem.userData = { velocities: velocities, imageData: imageData };
+            scene.add(particleSystem);
+        }
+
+        // --- 4. 粒子流更新逻辑（受物理表面热力图阻抗影响） ---
+        function updateParticles(delta) {
+            if (!particleSystem) return;
+            const positions = particleSystem.geometry.attributes.position.array;
+            const uvs = particleSystem.geometry.attributes.uv.array;
+            const velocities = particleSystem.userData.velocities;
+            const imgData = particleSystem.userData.imageData;
+            const count = velocities.length;
+
+            for(let i=0; i<count; i++) {
+                let speedMultiplier = 1.0;
+
+                // 如果有图片数据，根据当前粒子所在像素的红光通道（摩擦阻抗）减速
+                if(imgData) {
+                    let u = Math.floor(uvs[i*2] * analyzeCanvas.width);
+                    let v = Math.floor((1.0 - uvs[i*2+1]) * analyzeCanvas.height);
+                    let pixelIndex = (v * analyzeCanvas.width + u) * 4;
+                    
+                    if(pixelIndex >= 0 && pixelIndex < imgData.data.length) {
+                        let r = imgData.data[pixelIndex]; // 读取红色通道
+                        speedMultiplier = 1.0 - (r / 255 * 0.85); // 阻抗越高，速度越慢（最低降到15%速度）
+                    }
+                }
+
+                // 粒子由上往下流动 (Y轴负方向)
+                positions[i*3+1] -= 0.4 * delta * velocities[i] * speedMultiplier;
+
+                // 边界循环处理
+                if(positions[i*3+1] < -1.5) {
+                    positions[i*3+1] = 1.5;
+                    positions[i*3] = (Math.random() - 0.5) * 3;
+                }
+
+                // 同步更新 UV 坐标以便精准采样
+                uvs[i*2] = (positions[i*3] + 1.5) / 3;
+                uvs[i*2+1] = (positions[i*3+1] + 1.5) / 3;
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // --- 5. 图片上传事件监听与前端数据桥接 ---
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // 将图片绘制到隐藏的 Canvas 中，提取原生像素数据给粒子做物理引擎驱动
+                    analyzeCanvas.width = 128;
+                    analyzeCanvas.height = 128;
+                    analyzeCtx.drawImage(img, 0, 0, 128, 128);
+                    const imgData = analyzeCtx.getImageData(0, 0, 128, 128);
+
+                    // 触发重构
+                    createSurfacePlane(event.target.result);
+                    createParticleSystem(imgData);
+
+                    // 启动 AI 扫描线动画
+                    scanAnimation = true;
+                    scanProgress = 1.0; // 从最顶部开始扫
+                    document.getElementById('scan-status').innerText = "SCANNING...";
+                    document.getElementById('scan-status').style.color = "#d9383a";
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // --- 6. 3D 标签空间坐标映射（Surface Labels） ---
+        function updateLabels() {
+            if (!surfaceMesh || !scanAnimation) return;
+            
+            // 将 3D 空间中的两个固定坐标点映射到 2D 屏幕 HTML 元素上
+            const points = [
+                { id: 'label-1', pos: new THREE.Vector3(-0.5, 0.2, 0.1) },
+                { id: 'label-2', pos: new THREE.Vector3(0.6, -0.4, 0.05) }
+            ];
+
+            points.forEach(pt => {
+                const el = document.getElementById(pt.id);
+                if(scanProgress < 0.5) { // 扫描过半时逐步显现标签
+                    let wp = pt.pos.clone().applyMatrix4(surfaceMesh.matrixWorld);
+                    wp.project(camera);
+                    let x = (wp.x * .5 + .5) * window.innerWidth;
+                    let y = (-(wp.y * .5) + .5) * window.innerHeight;
+                    el.style.left = `${x}px`;
+                    el.style.top = `${y}px`;
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        // --- 7. 循环渲染核心 ---
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+
+            // 缓动旋转表面，增强3D立体感
+            if(surfaceMesh) {
+                surfaceMesh.rotation.z = Math.sin(clock.getElapsedTime() * 0.2) * 0.05;
+            }
+
+            // 更新扫描线逻辑
+            if(scanAnimation) {
+                scanProgress -= delta * 0.5;
+                surfaceMesh.material.uniforms.uScanProgress.value = scanProgress;
+                if(scanProgress < 0.0) {
+                    scanAnimation = false;
+                    document.getElementById('scan-status').innerText = "COMPLETED";
+                    document.getElementById('scan-status').style.color = "#00f5ff";
+                }
+            }
+
+            updateParticles(delta);
+            updateLabels();
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // 鸣枪开工
+        init();
+    </script>
+</body>
+</html>
