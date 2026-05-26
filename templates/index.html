@@ -1,180 +1,897 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <title>Garlileo | Physical Intelligence World Models</title>
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://garlileo.com/">
-    <meta property="og:title" content="Garlileo | Physical Intelligence World Models">
-    <meta property="og:description" content="Researching the boundary where AI meets the physical world through spatiotemporal orchestration.">
-    <meta property="og:image" content="https://garlileo.com/og-image.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <title>Garlileo | Physical Intelligence World Models</title>
+  <meta name="description" content="Garlileo — a unified physical intelligence paradigm. Fricial, Artifriction, and Resonial: the architecture for AI that feels the world.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://garlileo.com/">
+  <meta property="og:title" content="Garlileo | Physical Intelligence World Models">
+  <meta property="og:description" content="Intelligence is the negotiation with physical resistance.">
+  <meta property="og:image" content="https://garlileo.com/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Garlileo | Physical Intelligence World Models">
+  <meta name="twitter:description" content="Exploring the friction between silicon and physical reality.">
+  <meta name="twitter:image" content="https://garlileo.com/og-image.png">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://garlileo.com/">
-    <meta name="twitter:title" content="Garlileo | Physical Intelligence World Models">
-    <meta name="twitter:description" content="Exploring the friction between silicon, steel, and physical reality.">
-    <meta name="twitter:image" content="https://garlileo.com/og-image.png">
-    <style>
-        :root {
-            --bg: #f7f3f0;
-            --text-main: #1a1a1a;
-            --text-muted: #6b6661;
-            --border: #e8e2dc;
-            
-            
-            --cyan-brand: #114b4f;  
-            --accent-red: #d9383a;  
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@200;300;400&display=swap" rel="stylesheet">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <style>
+    :root {
+      --bg:         #f7f3f0;
+      --bg-2:       #f0ebe6;
+      --bg-3:       #e8e2dc;
+      --text:       #1a1a1a;
+      --text-mid:   #2e2925;
+      --muted:      #6b6661;
+      --border:     #e8e2dc;
+      --border-s:   rgba(17,75,79,0.15);
+      --cyan:       #114b4f;
+      --cyan-d:     rgba(17,75,79,0.08);
+      --cyan-f:     rgba(17,75,79,0.04);
+      --red:        #d9383a;
+      --red-d:      rgba(217,56,58,0.08);
+    }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: "Ivar", "Georgia", serif;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
 
-        .container {
-            max-width: 720px;
-            width: 100%;
-            padding: 12vh 2rem;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
 
-        .brand {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            font-size: 2.5rem;
-            color: var(--cyan-brand);
-            margin-bottom: 3rem;
-            display: flex;
-            align-items: baseline; 
-        }
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(247,243,240,0.97);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 52px;
+    }
 
-        
-        .brand .highlight-r {
-            color: var(--accent-red);
-            font-family: "Ivar", "Georgia", serif; 
-            font-weight: 400;
-            font-size: 3.7rem; 
-            line-height: 0;
-            position: relative;
-            top: 0.1rem; 
-            margin-left: 0.03em;
-            margin-right: 0.03em;
-        }
+    .topbar-brand {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      text-decoration: none;
+    }
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 400;
-            line-height: 1.2;
-            margin-bottom: 2.5rem;
-            letter-spacing: -0.01em;
-        }
+    .topbar-brand .r {
+      color: var(--red);
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 1.4rem;
+      line-height: 0;
+      position: relative;
+      top: 0.12rem;
+    }
 
-        .summary {
-            font-size: 1.4rem;
-            color: var(--text-muted);
-            margin-bottom: 4rem;
-        }
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
 
-        .framework-showcase {
-            margin-bottom: 5rem;
-            width: 100%;
-        }
+    .topbar-nav a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
 
-        .framework-showcase img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            cursor: zoom-in;
-        }
+    .topbar-nav a:hover { color: var(--cyan); }
 
-        .framework-showcase img:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-        }
+    .sandbox-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--red) !important;
+      border: 1px solid rgba(217,56,58,0.3);
+      padding: 0.3em 0.9em;
+      border-radius: 2px;
+      transition: all 0.2s !important;
+    }
 
-        .feed {
-            border-top: 1px solid var(--border);
-        }
+    .sandbox-pill:hover {
+      background: var(--red-d);
+      color: var(--red) !important;
+    }
 
-        /* Styles for the automatically generated links */
-        .post-entry {
-            display: block;
-            padding: 2.5rem 0;
-            text-decoration: none;
-            border-bottom: 1px solid var(--border);
-            transition: opacity 0.2s ease;
-        }
+    /* ── HERO ── */
+    .hero {
+      padding: 120px 2.5rem 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .post-entry:hover {
-            opacity: 0.5;
-        }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: start;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5rem;
+    }
 
-        .post-title {
-            font-size: 1.8rem;
-            color: var(--text-main);
-            font-weight: 400;
-        }
+    .hero-left {
+      padding-right: 4rem;
+      border-right: 1px solid var(--border);
+    }
 
-        footer {
-            margin-top: 8rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
+    /* Big brand mark */
+    .hero-brand {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 700;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      letter-spacing: 0.04em;
+      color: var(--cyan);
+      line-height: 1;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: baseline;
+    }
 
-        footer a {
-            color: var(--text-main);
-            text-decoration: none;
-            border-bottom: 1px solid #d4cfc7;
-        }
-    </style>
+    .hero-brand .r {
+      color: var(--red);
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 1.28em;
+      line-height: 0;
+      position: relative;
+      top: 0.1em;
+    }
+
+    .hero-tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.9;
+      max-width: 460px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Framework pill tags */
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .ctag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.35em 0.9em;
+      border: 1px solid var(--border-s);
+      color: var(--cyan);
+      background: var(--cyan-f);
+    }
+
+    .ctag-r {
+      border-color: rgba(217,56,58,0.25);
+      color: var(--red);
+      background: var(--red-d);
+    }
+
+    /* Eppur si muove quote */
+    .hero-quote {
+      border-left: 2px solid var(--red);
+      padding-left: 1.25rem;
+    }
+
+    .hq-text {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 0.3rem;
+    }
+
+    .hq-attr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    /* Hero right — architecture diagram */
+    .hero-right {
+      padding-left: 4rem;
+      padding-top: 0.5rem;
+    }
+
+    .diagram-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+      margin-bottom: 1rem;
+    }
+
+    .diagram-wrap {
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .diagram-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .diagram-wrap:hover img { transform: scale(1.015); }
+
+    .diagram-caption {
+      padding: 0.85rem 1rem;
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── THREE CONCEPTS STRIP ── */
+    .concepts-strip {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .concept-cell {
+      padding: 2.5rem 2.5rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .concept-cell:last-child { border-right: none; }
+    .concept-cell:hover { background: var(--bg-2); }
+
+    .cc-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      opacity: 0.5;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .cc-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--cyan);
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .cc-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      opacity: 0.6;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .cc-rule {
+      width: 24px; height: 1px;
+      background: var(--cyan);
+      opacity: 0.2;
+      margin-bottom: 1rem;
+    }
+
+    .cc-desc {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .sh-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    .sh-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      margin-left: 1.5rem;
+    }
+
+    /* ── FEATURED ARTICLE ── */
+    .featured-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2.5rem 3rem;
+    }
+
+    .featured-card {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .featured-card:hover { border-color: var(--border-s); }
+
+    .fc-left {
+      padding: 3rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .fc-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .fc-tag::before {
+      content: '';
+      width: 16px; height: 1px;
+      background: var(--red);
+    }
+
+    .fc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .fc-excerpt {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .fc-divider { background: var(--border); }
+
+    .fc-right {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .fc-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.55;
+      margin-bottom: 2rem;
+    }
+
+    .fc-body {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.9;
+      flex: 1;
+    }
+
+    .fc-body strong { color: var(--text); font-weight: 400; }
+    .fc-body em     { color: var(--cyan); font-style: italic; }
+
+    .fc-read {
+      margin-top: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: gap 0.25s;
+    }
+
+    .featured-card:hover .fc-read { gap: 0.85rem; }
+
+    /* ── ARTICLE GRID ── */
+    .articles-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2.5rem 5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .article-card {
+      display: block;
+      padding: 2.25rem 2rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .article-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s;
+    }
+
+    .article-card:hover { background: var(--bg-2); border-color: var(--border-s); }
+    .article-card:hover::after { transform: scaleX(1); }
+
+    .ac-concept {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: 0.65;
+      margin-bottom: 1rem;
+    }
+
+    .ac-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
+    .ac-excerpt {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* Placeholder cards for {{POST_FEED}} */
+    .post-entry {
+      display: block;
+      padding: 2.25rem 2rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-entry::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s;
+    }
+
+    .post-entry:hover { background: var(--bg-2); border-color: var(--border-s); }
+    .post-entry:hover::after { transform: scaleX(1); }
+
+    .post-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      background: var(--cyan);
+      padding: 4rem 2.5rem;
+    }
+
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      color: rgba(247,243,240,0.95);
+      line-height: 1.3;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .about-left h2 em {
+      font-style: italic;
+      color: rgba(217,56,58,0.8);
+    }
+
+    .about-left p {
+      font-size: 0.9rem;
+      color: rgba(247,243,240,0.55);
+      line-height: 1.9;
+    }
+
+    .about-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+    }
+
+    .ar-cell {
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .ar-cell-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(247,243,240,0.3);
+      margin-bottom: 0.5rem;
+    }
+
+    .ar-cell-val {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: rgba(247,243,240,0.75);
+      line-height: 1.4;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      display: flex;
+      align-items: baseline;
+    }
+
+    .footer-brand .r {
+      color: var(--red);
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 1.25em;
+      line-height: 0;
+      position: relative;
+      top: 0.12em;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-right a, .footer-right span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-right a:hover { color: var(--cyan); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .hero-brand { animation: fadeUp 0.8s ease both; }
+    .hero-tagline { animation: fadeUp 0.8s 0.15s ease both; }
+    .hero-desc { animation: fadeUp 0.8s 0.3s ease both; }
+    .concept-tags { animation: fadeUp 0.8s 0.4s ease both; }
+    .hero-quote { animation: fadeUp 0.8s 0.5s ease both; }
+    .hero-right { animation: fadeUp 0.8s 0.2s ease both; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-left { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 3rem; }
+      .hero-right { padding-left: 0; padding-top: 2.5rem; }
+      .concepts-strip { grid-template-columns: 1fr; }
+      .concept-cell { border-right: none; border-bottom: 1px solid var(--border); }
+      .featured-card { grid-template-columns: 1fr; }
+      .fc-divider { display: none; }
+      .fc-left { border-right: none; border-bottom: 1px solid var(--border); }
+      .articles-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .topbar-nav { display: none; }
+      .section-header { padding: 2rem 1.5rem 0; }
+      .featured-wrap, .articles-grid { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero { padding: 80px 1.5rem 0; }
+      .about-strip { padding: 3rem 1.5rem; }
+      footer { padding: 2rem 1.5rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="brand">GA<span class="highlight-r">R</span>LILEO</div>
-            <a href="/sandbox.html" style="color: #d9383a; text-decoration: none; font-size: 0.9rem; border: 1px solid rgba(217,56,58,0.3); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-top: -1rem; margin-bottom: 2rem;">
-    ⚡️ ENTER FRICIAL PROTOCOL SANDBOX
-</a>
-            <h1>Intelligence is the negotiation with physical resistance.</h1>
-            <p class="summary">The Garlileo Architecture: A unified physical intelligence paradigm bridging Gritray, Fricial, Artifriction, and Resonial Protocols.</p>
-        </header>
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a href="/" class="topbar-brand">GA<span class="r">R</span>LILEO</a>
+  <div class="topbar-nav">
+    <a href="#framework">Framework</a>
+    <a href="#research">Research</a>
+    <a href="mailto:Frank@X-Qubit.com">Contact</a>
+    <a href="/sandbox.html" class="sandbox-pill">⚡ Fricial Sandbox</a>
+  </div>
+</nav>
 
-        <div class="framework-showcase">
-            <a href="/assets/world-model-loop.png" target="_blank" title="Click to view Garlileo Core Architecture Blueprint">
-                <img src="/assets/world-model-loop.png" alt="Garlileo World Model Closed-Loop Architecture">
-            </a>
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-brand">GA<span class="r">R</span>LILEO</div>
+        <h1 class="hero-tagline">Intelligence is the<br>negotiation with<br>physical resistance.</h1>
+        <p class="hero-desc">
+          A unified physical intelligence paradigm bridging
+          Fricial, Artifriction, and Resonial —
+          the architecture for AI that doesn't merely observe the world,
+          but feels it.
+        </p>
+        <div class="concept-tags">
+          <span class="ctag">Fricial</span>
+          <span class="ctag">Artifriction</span>
+          <span class="ctag">Resonial</span>
+          <span class="ctag">Gritray</span>
+          <span class="ctag ctag-r">Physical Intelligence</span>
+          <span class="ctag ctag-r">World Models</span>
         </div>
+        <div class="hero-quote">
+          <p class="hq-text">"Eppur si muove."<br>And yet it moves — it resists, it pushes back.</p>
+          <p class="hq-attr">Galileo Galilei, 1633 · The spirit behind Garlileo</p>
+        </div>
+      </div>
 
-        <main class="feed">
-            {{POST_FEED}}
-        </main>
-
-        <footer>
-            <p>&copy; 2026 Garlileo Lab. Dedicated to Physical Truth and Experimental Verification.</p>
-            <p>Inquiries: <a href="mailto:Frank@X-Qubit.com">Frank@X-Qubit.com</a></p>
-        </footer>
+      <div class="hero-right">
+        <div class="diagram-label">// Core Architecture — Closed-Loop World Model</div>
+        <div class="diagram-wrap">
+          <a href="/assets/world-model-loop.png" target="_blank">
+            <img src="/assets/world-model-loop.png"
+                 alt="Garlileo World Model Closed-Loop Architecture: Fricial, Artifriction, Resonial">
+          </a>
+          <div class="diagram-caption">
+            Fricial · Artifriction · Resonial — The Garlileo Triad
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- THREE CONCEPTS -->
+  <section class="concepts-strip" id="framework">
+    <div class="concept-cell">
+      <div class="cc-num">Layer 01 // Physical Reality</div>
+      <div class="cc-name">Fricial</div>
+      <div class="cc-sub">Generalized Resistance Layer</div>
+      <div class="cc-rule"></div>
+      <p class="cc-desc">The generalized friction of the real world — not merely contact resistance, but all forms of physical impedance. The latent constraint that every embodied AI must learn to navigate.</p>
+    </div>
+    <div class="concept-cell">
+      <div class="cc-num">Layer 02 // Digital Physics</div>
+      <div class="cc-name">Artifriction</div>
+      <div class="cc-sub">Artificial Friction Modeling</div>
+      <div class="cc-rule"></div>
+      <p class="cc-desc">The AI-native representation of Fricial — modeling, predicting, and integrating resistance into world model architectures. The bridge between symbolic smoothness and physical reality.</p>
+    </div>
+    <div class="concept-cell">
+      <div class="cc-num">Layer 03 // Cognitive Orchestration</div>
+      <div class="cc-name">Resonial</div>
+      <div class="cc-sub">Global Rhythm Coordination</div>
+      <div class="cc-rule"></div>
+      <p class="cc-desc">The temporal intelligence layer — synchronizing agents across timescales. Where Fricial governs local resistance, Resonial governs global coherence. The conductor the world model needs.</p>
+    </div>
+  </section>
+
+  <!-- FEATURED ARTICLE -->
+  <div class="section-header">
+    <span class="sh-label">// Featured Research</span>
+    <div class="sh-rule"></div>
+  </div>
+
+  <div class="featured-wrap">
+    <a href="/garlileo-framework.html" class="featured-card">
+      <div class="fc-left">
+        <div class="fc-tag">Foundation Paper</div>
+        <div class="fc-title">The Garlileo Architecture: Why Physical Intelligence Needs a Cosmological Framework</div>
+        <p class="fc-excerpt">The transition from Gritray to Garlileo was not a rebrand. It was the realization that world models need not only technical layers, but a unifying cosmological identity — one with Galileo's spirit at its center.</p>
+      </div>
+      <div class="fc-divider"></div>
+      <div class="fc-right">
+        <div class="fc-meta">Garlileo Lab · Concept Report · 2026</div>
+        <p class="fc-body">
+          Current AI systems largely operate in frictionless abstraction:
+          text, prediction, token flows, latent approximations.
+          <em>But physical intelligence cannot emerge from abstraction alone.</em>
+          <br><br>
+          The inserted 'r' is intentional. It symbolizes:
+          <strong>reality, resistance, resonance, recursion, relativity.</strong>
+          The 'r' is not a typo — it is the disturbance that transforms
+          observation into interaction.
+        </p>
+        <div class="fc-read">Read Framework Paper →</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ARTICLE GRID — populated by {{POST_FEED}} or static cards -->
+  <div class="section-header" id="research">
+    <span class="sh-label">// Research Articles</span>
+    <div class="sh-rule"></div>
+  </div>
+
+  <div class="articles-grid">
+    {{POST_FEED}}
+  </div>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip">
+    <div class="about-inner">
+      <div class="about-left">
+        <h2>Galileo observed the cosmos.<br><em>Garlileo attempts to model it.</em></h2>
+        <p>
+          Garlileo is an independent physical intelligence research lab
+          exploring the boundary where AI meets the real world.
+          Through the Fricial–Artifriction–Resonial framework,
+          we develop the conceptual architecture for world models
+          that understand resistance, not just representation.
+        </p>
+      </div>
+      <div class="about-right">
+        <div class="ar-cell">
+          <div class="ar-cell-label">Core Thesis</div>
+          <div class="ar-cell-val">Friction is not an obstacle — it is the signal</div>
+        </div>
+        <div class="ar-cell">
+          <div class="ar-cell-label">Research Focus</div>
+          <div class="ar-cell-val">Physical world models & embodied AI</div>
+        </div>
+        <div class="ar-cell">
+          <div class="ar-cell-label">Framework</div>
+          <div class="ar-cell-val">Fricial · Artifriction · Resonial</div>
+        </div>
+        <div class="ar-cell">
+          <div class="ar-cell-label">Contact</div>
+          <div class="ar-cell-val">Frank@X-Qubit.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">GA<span class="r">R</span>LILEO</div>
+  <div class="footer-right">
+    <span>&copy; 2026 Garlileo Lab</span>
+    <a href="mailto:Frank@X-Qubit.com">Frank@X-Qubit.com</a>
+    <a href="/sandbox.html">Fricial Sandbox</a>
+    <span>Physical Truth · Experimental Verification</span>
+  </div>
+</footer>
 
 </body>
 </html>
