@@ -2,7 +2,7 @@
 
 Most current world models are built around one assumption:
 
-![Galileo](/assets/galileo_view_of_the_earth.png)
+![Galileo](assets/galileo_view_of_the_earth.png)
 
 ```text
 World = geometry + physics + prediction
